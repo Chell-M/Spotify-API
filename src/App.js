@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchBar from './components/SearchBar/SearchBar'
 import SearchResults from './components/SearchResults/SearchResults'
 import Playlist from './components/Playlist/Playlist'
@@ -9,6 +9,21 @@ function App() {
   const [searchResults, setSearchResults] = useState([])
   const [playlistName, setPlaylistName] = useState('My Playlist')
   const [playlistTracks, setPlayListTracks] = useState([])
+  const [currentTrack, setCurrentTrack] = useState(null)
+
+  useEffect(() => {
+    const fetchCurrentTrack = async () => {
+      const track = await Spotify.getCurrentTrack()
+      setCurrentTrack(track)
+    };
+
+    fetchCurrentTrack()
+
+    const interval = setInterval(fetchCurrentTrack, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
 
   const addTrack = track => {
     if (!playlistTracks.find(savedTrack => savedTrack.id === track.id)) {
@@ -41,7 +56,14 @@ function App() {
   return (
     <div className="App">
       <div className='headerWrap'>
-        <h1>Ja<span className="highlight">mmm</span>ing</h1>
+
+        {currentTrack && (
+          <div className="CurrentTrack">
+            <h1>Ja<span className="highlight">mmm</span>ing</h1>
+            <p>Currently Playing: {currentTrack.name} - {currentTrack.artist}</p>
+          </div>
+        )}
+
         <SearchBar onSearch={search} />
       </div>
       <div className='wrap'>
@@ -53,6 +75,7 @@ function App() {
           onNameChange={updatePlaylistName}
           onSave={savePlaylist}
         />
+
       </div>
     </div >
   )
