@@ -1,8 +1,32 @@
 .App {
+  font-family: monospace;
   background-color: #121212;
   color: #fff;
   padding: 20px;
   min-height: 100vh;
+}
+
+h1 {
+  font-size: 60px;
+}
+div.saveWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+}  
+
+div.headerWrap {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.NowPlaying .track-timing {
+    text-align: center;
+    position: relative;
+    color: white;
 }
 
 .highlight {
@@ -42,5 +66,27 @@ div.Track {
   flex-direction: row-reverse;
 
 }
+.NowPlaying .progress-bar-background {
+    width: 100%;
+    background-color: #ccc;
+    height: 20px;
+    position: relative;
+    border-radius: 5px;
+    margin-top: 10px;
+}
 
+.NowPlaying .progress-bar-foreground {
+    height: 20px;
+    background-color: #1db954; /* Spotify green */
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 5px;
+}
+
+.NowPlaying .track-timing {
+    text-align: center;
+    margin-top: 5px;
+    color: white;
+}
 

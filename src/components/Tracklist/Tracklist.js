@@ -3,7 +3,6 @@ import Track from '../Track/Track';
 import './Tracklist.css';
 
 function Tracklist({ tracks, onAdd, onRemove, isRemoval }) {
-
   return (
     <div className="Tracklist">
       {tracks.map(track => (

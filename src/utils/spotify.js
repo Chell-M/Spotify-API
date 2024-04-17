@@ -19,7 +19,7 @@ const Spotify = {
       window.history.pushState('Access Token', null, '/');
       return accessToken;
     } else {
-      const scope = 'playlist-modify-public user-read-playback-state'
+      const scope = 'playlist-modify-public user-read-playback-state';
       const accessUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&scope=${encodeURIComponent(scope)}&redirect_uri=${encodeURIComponent(redirectUri)}`;
       window.location.href = accessUrl;
     }
@@ -86,28 +86,32 @@ const Spotify = {
 
   async getCurrentTrack() {
     const accessToken = this.getAccessToken();
-    if (!accessToken) return;
-
-    return fetch(`https://api.spotify.com/v1/me/player/currently-playing`, {
+    return fetch('https://api.spotify.com/v1/me/player/currently-playing', {
       headers: { Authorization: `Bearer ${accessToken}` }
-    }).then(response => {
-      if (response.status === 204 || response.status > 400) {
-        return {}; // No track is playing, or an error occurred
-      }
-      return response.json();
-    }).then(jsonResponse => {
-      if (!jsonResponse.item) return {}; // No track data available
+    }).then(response => response.json())
+      .then(jsonResponse => {
+        if (jsonResponse && jsonResponse.item) {
+          return {
+            id: jsonResponse.item.id,
+            name: jsonResponse.item.name,
+            artist: jsonResponse.item.artists.map(artist => artist.name).join(', '),
+            album: jsonResponse.item.album.name,
+            uri: jsonResponse.item.uri,
+            progress_ms: jsonResponse.progress_ms,
+            duration_ms: jsonResponse.item.duration_ms
+          };
+        }
 
-      return {
-        id: jsonResponse.item.id,
-        name: jsonResponse.item.name,
-        artist: jsonResponse.item.artists.map(artist => artist.name).join(', '),
-        album: jsonResponse.item.album.name,
-        uri: jsonResponse.item.uri
-      };
-    });
+        return {
+          id: jsonResponse.item.id,
+          name: jsonResponse.item.name,
+          artist: jsonResponse.item.artists.map(artist => artist.name).join(', '),
+          album: jsonResponse.item.album.name,
+          uri: jsonResponse.item.uri
+        };
+      });
   }
-};
+}
 
 export default Spotify
 
