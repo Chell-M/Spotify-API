@@ -86,22 +86,35 @@ const Spotify = {
 
   async getCurrentTrack() {
     const accessToken = this.getAccessToken();
-    return fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+    const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
       headers: { Authorization: `Bearer ${accessToken}` }
-    }).then(response => response.json())
-      .then(jsonResponse => {
-        if (jsonResponse && jsonResponse.item) {
-          return {
-            id: jsonResponse.item.id,
-            name: jsonResponse.item.name,
-            artist: jsonResponse.item.artists.map(artist => artist.name).join(', '),
-            album: jsonResponse.item.album.name,
-            uri: jsonResponse.item.uri,
-            progress_ms: jsonResponse.progress_ms,
-            duration_ms: jsonResponse.item.duration_ms
-          };
-        }
-      });
+    });
+    const text = await response.text(); // Get response as text to check if it's empty or malformed
+    console.log("Response Text: ", text); // Log the raw text of the response
+
+    if (!text) {
+      console.log("No content returned from Spotify API");
+      return null;
+    }
+
+    try {
+      const jsonResponse = JSON.parse(text);
+      if (jsonResponse && jsonResponse.item) {
+        return {
+          id: jsonResponse.item.id,
+          name: jsonResponse.item.name,
+          artist: jsonResponse.item.artists.map(artist => artist.name).join(', '),
+          album: jsonResponse.item.album.name,
+          uri: jsonResponse.item.uri,
+          progress_ms: jsonResponse.progress_ms,
+          duration_ms: jsonResponse.item.duration_ms
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return null;
+    }
   }
 }
 
