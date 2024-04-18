@@ -8,7 +8,6 @@ const NowPlaying = () => {
   useEffect(() => {
     const fetchCurrentTrack = async () => {
       const track = await Spotify.getCurrentTrack();
-      console.log("Fetched track progress: ", track.progress_ms);  // Debugging log
       setCurrentTrack(track);
     };
 

@@ -101,14 +101,6 @@ const Spotify = {
             duration_ms: jsonResponse.item.duration_ms
           };
         }
-
-        return {
-          id: jsonResponse.item.id,
-          name: jsonResponse.item.name,
-          artist: jsonResponse.item.artists.map(artist => artist.name).join(', '),
-          album: jsonResponse.item.album.name,
-          uri: jsonResponse.item.uri
-        };
       });
   }
 }
