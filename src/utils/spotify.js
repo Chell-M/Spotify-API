@@ -19,9 +19,52 @@ const Spotify = {
       window.history.pushState('Access Token', null, '/');
       return accessToken;
     } else {
-      const scope = 'playlist-modify-public user-read-playback-state';
-      const accessUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&scope=${encodeURIComponent(scope)}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+      const scope = encodeURIComponent('user-read-private user-read-email playlist-modify-public playlist-read-private user-modify-playback-state user-read-playback-state');
+      const accessUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&scope=${scope}&redirect_uri=${encodeURIComponent(redirectUri)}`;
       window.location.href = accessUrl;
+    }
+  },
+
+  async play(uri) {
+    const accessToken = this.getAccessToken();
+    if (!accessToken) return;
+    try {
+      const options = {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      };
+      if (uri) {  // Only set body if uri is provided
+        options.body = JSON.stringify({ uris: [uri] });
+      }
+      const response = await fetch('https://api.spotify.com/v1/me/player/play', options);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error playing track:', error);
+    }
+  },
+  async pause() {
+    const accessToken = this.getAccessToken();
+    if (!accessToken) {
+      console.error("Access token is not available.");
+      return;
+    }
+    try {
+      const response = fetch('https://api.spotify.com/v1/me/player/pause', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error pausing playback:', error);
     }
   },
 
@@ -119,4 +162,3 @@ const Spotify = {
 }
 
 export default Spotify
-

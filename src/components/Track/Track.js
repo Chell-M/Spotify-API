@@ -1,5 +1,6 @@
 import React from 'react';
 import './Track.css';
+import Spotify from '../../utils/spotify'; // Make sure the path is correct
 
 function Track({ track, onAdd, onRemove, isRemoval }) {
   const addTrack = () => {
@@ -9,6 +10,10 @@ function Track({ track, onAdd, onRemove, isRemoval }) {
   const removeTrack = () => {
     onRemove(track)
   }
+
+  const playTrack = () => {
+    Spotify.play(`spotify:track:${track.id}`); // Ensures the URI format is correct
+  };
 
   return (
     <div className="Track">
@@ -22,6 +27,7 @@ function Track({ track, onAdd, onRemove, isRemoval }) {
           :
           <button className="Track-action" onClick={addTrack}>+</button>
       }
+      <button className="Track-action" onClick={playTrack}>Play</button> {/* Play button */}
     </div>
   );
 }
